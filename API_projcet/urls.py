@@ -6,6 +6,7 @@ from django.conf.urls.static import static
 
 from rest_framework.authtoken.views import obtain_auth_token
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from rest_framework.authentication import TokenAuthentication
 
 
 urlpatterns = [

@@ -1,8 +1,12 @@
-import email
+from unicodedata import name
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
+from API_app.models import Contact
 
 @api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticated])
+#@permission_classes([AllowAny])
 def firstAPI(request):
     if request.method=="POST":
         name=request.data['name']
@@ -50,3 +54,43 @@ def registrationAPI(request):
         user.save()
 
         return Response({"Success":"User Successfully Registered"})
+
+
+# #Function Based API View
+
+# @api_view(['POST',])
+# def contactpost(request):
+#     if request.method=="POST":
+#         data=request.data 
+#         name=data['name']
+#         email=data['email']
+#         phone=data['phone']
+#         subject=data['subject']
+#         details=data['details']
+
+#         contact = Contact(name=name, email=email, subject=subject, phone=phone, details=details)
+#         contact.save()
+
+#         return Response({"success":"Successfully Contact is saved."})
+    
+
+from rest_framework.views import APIView
+
+class ContactAPIView(APIView):
+    permission_classes=[AllowAny,]
+    def post(self, request, format=None):
+        data=request.data 
+        name=data['name']
+        email=data['email']
+        phone=data['phone']
+        subject=data['subject']
+        details=data['details']
+
+        contact = Contact(name=name, email=email, subject=subject, phone=phone, details=details)
+        contact.save()
+
+        return Response({"success":"Successfully Contact is saved."})
+    
+
+    def get(self, request, format=None):
+        return Response({"Success":"Success from Get method"})
