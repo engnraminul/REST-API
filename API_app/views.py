@@ -74,23 +74,51 @@ def registrationAPI(request):
 #         return Response({"success":"Successfully Contact is saved."})
     
 
+# from rest_framework.views import APIView
+
+# class ContactAPIView(APIView):
+#     permission_classes=[AllowAny,]
+#     def post(self, request, format=None):
+#         data=request.data 
+#         name=data['name']
+#         email=data['email']
+#         phone=data['phone']
+#         subject=data['subject']
+#         details=data['details']
+
+#         contact = Contact(name=name, email=email, subject=subject, phone=phone, details=details)
+#         contact.save()
+
+#         return Response({"success":"Successfully Contact is saved."})
+    
+
+#     def get(self, request, format=None):
+#         return Response({"Success":"Success from Get method"})
+
+
+
+
+#Serializer--------------
+
+from API_app.serializers import ContactSerializer
 from rest_framework.views import APIView
 
 class ContactAPIView(APIView):
     permission_classes=[AllowAny,]
     def post(self, request, format=None):
         data=request.data 
-        name=data['name']
-        email=data['email']
-        phone=data['phone']
-        subject=data['subject']
-        details=data['details']
+        serializer = ContactSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+       
 
-        contact = Contact(name=name, email=email, subject=subject, phone=phone, details=details)
-        contact.save()
-
-        return Response({"success":"Successfully Contact is saved."})
+        #return Response({"success":"Successfully Contact is saved."})
+        return Response(serializer.data)
     
 
     def get(self, request, format=None):
-        return Response({"Success":"Success from Get method"})
+        # contactobj = Contact.objects.get(id=1)
+        # serializer = ContactSerializer(contactobj, many=False)
+        contactobj = Contact.objects.all()
+        serializer = ContactSerializer(contactobj, many=True)
+        return Response(serializer.data)
