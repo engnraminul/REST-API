@@ -98,9 +98,9 @@ def registrationAPI(request):
 
 
 
-#Serializer--------------
+#Model Serializer--------------
 
-from API_app.serializers import ContactSerializer
+from API_app.serializers import BlogDetailsSerializer, ContactSerializer
 from rest_framework.views import APIView
 
 class ContactAPIView(APIView):
@@ -122,3 +122,29 @@ class ContactAPIView(APIView):
         contactobj = Contact.objects.all()
         serializer = ContactSerializer(contactobj, many=True)
         return Response(serializer.data)
+
+
+
+
+#generic view
+from rest_framework.generics import CreateAPIView
+from .models import Blog
+from API_app.serializers import BlogSerializer
+from rest_framework import status
+
+class BlogCreateAPIView(CreateAPIView):
+    permission_classes = [IsAuthenticated,]
+    queryset = Blog.objects.all()
+    serializer_class = BlogSerializer
+    def perform_create(self, serializer):
+        return serializer.save(user=self.request.user)
+    
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        instance = self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+
+        #new serializer for deatails all fields
+        serializer = BlogDetailsSerializer(instance=instance, many=False)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
