@@ -126,8 +126,8 @@ class ContactAPIView(APIView):
 
 
 
-#generic view
-from rest_framework.generics import CreateAPIView
+#generic CreateAPIView
+from rest_framework.generics import CreateAPIView, ListAPIView, ListCreateAPIView
 from .models import Blog
 from API_app.serializers import BlogSerializer
 from rest_framework import status
@@ -148,3 +148,12 @@ class BlogCreateAPIView(CreateAPIView):
         #new serializer for deatails all fields
         serializer = BlogDetailsSerializer(instance=instance, many=False)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+
+
+#ListAPIView
+class BlogListAPIView(ListAPIView):
+    permission_classes = [IsAuthenticated,]
+    queryset = Blog.objects.all()
+    serializer_class = BlogDetailsSerializer
+
