@@ -150,10 +150,43 @@ class BlogCreateAPIView(CreateAPIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 
+#CreateListAPIView (create post and return list)
+class BlogListCreateAPIView(ListCreateAPIView):
+    permission_classes = [IsAuthenticated,]
+    queryset = Blog.objects.all()
+    serializer_class = BlogSerializer
+    def perform_create(self, serializer):
+        return serializer.save(user=self.request.user)
+    
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        instance = self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+
+        #new serializer for deatails all fields
+        serializer = BlogDetailsSerializer(instance=instance, many=False)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+    
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = BlogDetailsSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+
+
+
 
 #ListAPIView
 class BlogListAPIView(ListAPIView):
     permission_classes = [IsAuthenticated,]
     queryset = Blog.objects.all()
     serializer_class = BlogDetailsSerializer
+
 
