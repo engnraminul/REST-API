@@ -127,7 +127,7 @@ class ContactAPIView(APIView):
 
 
 #generic CreateAPIView
-from rest_framework.generics import CreateAPIView, ListAPIView, ListCreateAPIView
+from rest_framework.generics import CreateAPIView, ListAPIView, ListCreateAPIView, RetrieveAPIView, UpdateAPIView, RetrieveUpdateAPIView
 from .models import Blog
 from API_app.serializers import BlogSerializer
 from rest_framework import status
@@ -190,3 +190,30 @@ class BlogListAPIView(ListAPIView):
     serializer_class = BlogDetailsSerializer
 
 
+#RetrieveAPIView or Details View
+class BlogRetrieveAPIView(RetrieveAPIView):
+    permission_classes = [IsAuthenticated,]
+    queryset = Blog.objects.all()
+    serializer_class = BlogDetailsSerializer
+    lookup_field = 'id'
+
+
+#UpdateAPIView
+class BlogUpdateAPIView(UpdateAPIView):
+    permission_classes = [IsAuthenticated,]
+    queryset = Blog.objects.all()
+    serializer_class = BlogSerializer
+    lookup_field = 'id'
+
+
+#RetrieveUpdateAPIView
+class BlogRetrieveUpdateAPIView(RetrieveUpdateAPIView):
+    permission_classes = [IsAuthenticated,]
+    queryset = Blog.objects.all()
+    serializer_class = BlogSerializer
+    lookup_field = 'id'
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = BlogDetailsSerializer(instance)
+        return Response(serializer.data)
