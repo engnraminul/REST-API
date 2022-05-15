@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import BlogCreateAPIView, BlogListAPIView, BlogListCreateAPIView, BlogRetrieveAPIView, ContactAPIView, firstAPI, registrationAPI, BlogUpdateAPIView, BlogRetrieveUpdateAPIView
+from .views import BlogCreateAPIView, BlogListAPIView, BlogListCreateAPIView, BlogRetrieveAPIView, ContactAPIView, firstAPI, registrationAPI, BlogUpdateAPIView, BlogRetrieveUpdateAPIView, BlogDestroyAPIView
 
 urlpatterns = [
     path('profile/', firstAPI),
@@ -11,5 +11,6 @@ urlpatterns = [
     path('blogdetails/<int:id>/', BlogRetrieveAPIView.as_view()),
     path('updateblog/<int:id>/', BlogUpdateAPIView.as_view()),
     path('detailupdate/<int:id>/', BlogRetrieveUpdateAPIView.as_view()),
+    path('blogdelete/<int:id>/', BlogDestroyAPIView.as_view()),
 
 ]
